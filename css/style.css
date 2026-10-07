@@ -65,11 +65,10 @@ figure {
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
 }
 
-#summary      { top: 12%; left: 8%;  --rot: -2deg; }
-#linkedin     { top: 10%; left: 42%; --rot: 3deg;  }
-#photo-album  { top: 52%; left: 14%; --rot: -4deg; }
-#github       { top: 55%; left: 48%; --rot: 2deg;  }
-#publications { top: 30%; left: 72%; --rot: -1deg; }
+#summary { top: 79%; left: 12%;  --rot: -17deg; }
+#links { top: 10%; left: 42%; --rot: 3deg;  }
+#photo-album  { top: 45%; left: 14%; --rot: -4deg; }
+#publications { top: 43%; left: 72%; --rot: 19deg; }
 
 .newspaper {
   width: 320px;
