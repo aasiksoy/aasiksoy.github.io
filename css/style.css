@@ -26,6 +26,8 @@ figure {
   background-image: url("../images/board.jpg");
   background-size: cover;
   background-position: center;
+  transform-origin: 0 0;
+  transition: transform 0.8s ease;
 }
 
 .strings {
