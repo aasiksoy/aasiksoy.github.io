@@ -72,7 +72,7 @@ figure {
 }
 
 #photo-album  { top: 9%;  left: 4%;  width: 28%; --rot: -5deg; }
-#summary      { top: 7%;  left: 37%; width: 35%; --rot: 2deg; }
+#summary      { top: 7%;  left: 38%; width: 31%; --rot: 2deg; font-size: 1cqw; }
 #links        { top: 70%; left: 10%; width: 14%; --rot: 6deg; }
 #publications { top: 56%; left: 47%; width: 40%; --rot: -3deg; }
 
@@ -173,9 +173,10 @@ figure {
   top: 6px;
   right: 6px;
   padding: 2px 8px;
-  border: 1px solid #ffeee0;
+  border: 1px solid #fff5ed;
   border-radius: 4px;
   background: #570000;
+  color: #fff5ed;
   font-family: "Caveat", cursive;
   font-size: 0.9em;
   cursor: pointer;
@@ -185,7 +186,34 @@ figure {
   display: block;
 }
 
+.hint {
+  position: absolute;
+  top: 84%;
+  left: 29%;
+  margin: 0;
+  font-family: "Caveat", cursive;
+  font-size: 2cqw;
+  color: #f4ead2;
+  transform: rotate(-4deg);
+  pointer-events: none;
+  animation: hint-bob 2.4s ease-in-out infinite;
+  transition: opacity 0.6s ease;
+}
+
+.hint.hidden {
+  opacity: 0;
+}
+
+@keyframes hint-bob {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -0.4cqw; }
+}
+
 @media (max-width: 760px) {
+  .hint {
+    display: none;
+  }
+
   .viewport {
     display: block;
     height: auto;

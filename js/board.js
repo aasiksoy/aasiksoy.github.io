@@ -43,6 +43,7 @@ cards.forEach((card) => {
   card.appendChild(backTag);
 
   card.addEventListener("click", () => {
+    document.querySelector(".hint").classList.add("hidden");
     zoomIn(card);
   });
 });
