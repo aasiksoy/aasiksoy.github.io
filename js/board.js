@@ -2,21 +2,26 @@ const cards = document.querySelectorAll('.card');
 const board = document.querySelector('.board');
 let zoomedCard = null;
 
+const narrowScreen = window.matchMedia("(max-width: 760px)");
+
 function zoomIn(card) {
     zoomOut();
+    if (narrowScreen.matches) {
+        return;
+    }
     const centerX = card.offsetLeft + card.offsetWidth / 2;
     const centerY = card.offsetTop + card.offsetHeight / 2;
-    const scale = 2.5;
-    const translateX = board.offsetWidth / 2 - centerX * scale;
-    const translateY = board.offsetHeight / 2 - centerY * scale;
+    const scale = Math.min(
+        3,
+        (window.innerWidth * 0.85) / card.offsetWidth,
+        (window.innerHeight * 0.85) / card.offsetHeight
+    );
+    const translateX = window.innerWidth / 2 - board.offsetLeft - centerX * scale;
+    const translateY = window.innerHeight / 2 - board.offsetTop - centerY * scale;
 
     board.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     card.classList.add("zoomed");
     zoomedCard = card;
-
-    card.classList.add("zoomed");
-    zoomedCard = card;
-
 }
 
 function zoomOut() {
