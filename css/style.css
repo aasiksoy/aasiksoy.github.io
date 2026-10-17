@@ -45,7 +45,7 @@ figure {
 
 .card {
   position: absolute;
-  padding: 1.1cqw;
+  padding: 1cqw;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
   transform: rotate(var(--rot, 0deg));
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -71,10 +71,10 @@ figure {
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
 }
 
-#photo-album  { top: 9%;  left: 4%;  width: 28%; --rot: -5deg; }
-#summary      { top: 7%;  left: 38%; width: 31%; --rot: 2deg; font-size: 1cqw; }
-#links        { top: 70%; left: 10%; width: 14%; --rot: 6deg; }
-#publications { top: 56%; left: 47%; width: 40%; --rot: -3deg; }
+#photo-album  { top: 10%; left: 5.5%; width: 25%;   --rot: -5deg; }
+#summary      { top: 8%;  left: 40%;  width: 27%;   --rot: 2deg; font-size: 0.88cqw; }
+#links        { top: 71%; left: 11%;  width: 12.5%; --rot: 6deg; }
+#publications { top: 57%; left: 49.5%; width: 35%;  --rot: -3deg; }
 
 .newspaper {
   width: 320px;
@@ -102,7 +102,7 @@ figure {
 .note {
   background: #fdf3a7;
   font-family: "Caveat", cursive;
-  font-size: 1.15cqw;
+  font-size: 1cqw;
   line-height: 1.2;
 }
 
@@ -125,9 +125,9 @@ figure {
 
 .polaroid {
   background: #fff;
-  padding: 0.9cqw 0.9cqw 1.4cqw;
+  padding: 0.8cqw 0.8cqw 1.25cqw;
   font-family: "Caveat", cursive;
-  font-size: 1.15cqw;
+  font-size: 1cqw;
   text-align: center;
 }
 
