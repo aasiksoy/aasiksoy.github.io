@@ -125,10 +125,14 @@ figure {
 
 .polaroid {
   background: #fff;
-  padding: 0.9cqw 0.9cqw 1.2cqw;
+  padding: 0.9cqw 0.9cqw 1.4cqw;
   font-family: "Caveat", cursive;
   font-size: 1.15cqw;
   text-align: center;
+}
+
+.polaroid figcaption {
+  margin-top: 0.5em;
 }
 
 .album-window {
@@ -163,20 +167,15 @@ figure {
 #prev-photo { left: 6px; }
 #next-photo { right: 6px; }
 
-.polaroid figcaption {
-  margin-top: 0.5em;
-  min-height: 1.2em;
-}
-
 .back-tag {
   display: none;
   position: absolute;
   top: 6px;
   right: 6px;
   padding: 2px 8px;
-  border: 1px solid #555;
+  border: 1px solid #ffeee0;
   border-radius: 4px;
-  background: #fff;
+  background: #570000;
   font-family: "Caveat", cursive;
   font-size: 0.9em;
   cursor: pointer;
@@ -230,6 +229,6 @@ figure {
   }
 
   .polaroid {
-    padding: 10px 10px 14px;
+    padding: 10px 10px 16px;
   }
 }

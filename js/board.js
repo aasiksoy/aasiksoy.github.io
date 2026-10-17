@@ -59,21 +59,19 @@ window.addEventListener("resize", () => {
   }
 });
 
-const photos = [
-  { src: "images/photos/photo1.jpg", caption: "Caption one", alt: "Describe photo one" },
-  { src: "images/photos/photo2.jpg", caption: "Caption two", alt: "Describe photo two" },
-  { src: "images/photos/photo3.jpg", caption: "Caption three", alt: "Describe photo three" },
-];
+const photoCount = 26;
+const photos = Array.from({ length: photoCount }, (_, i) => ({
+  src: `images/photos/photo${i + 1}.jpg`,
+  alt: `Photo ${i + 1}`,
+}));
 
 let photoIndex = 0;
 const albumPhoto = document.getElementById("album-photo");
-const albumCaption = document.getElementById("album-caption");
 
 function showPhoto(index) {
   photoIndex = (index + photos.length) % photos.length;
   albumPhoto.src = photos[photoIndex].src;
   albumPhoto.alt = photos[photoIndex].alt;
-  albumCaption.textContent = photos[photoIndex].caption;
 }
 
 document.getElementById("prev-photo").addEventListener("click", (e) => {
