@@ -45,7 +45,7 @@ figure {
 
 .card {
   position: absolute;
-  padding: 1cqw;
+  padding: 0.85cqw;
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
   transform: rotate(var(--rot, 0deg));
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -71,10 +71,10 @@ figure {
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
 }
 
-#photo-album  { top: 10%; left: 5.5%; width: 25%;   --rot: -5deg; }
-#summary      { top: 8%;  left: 40%;  width: 27%;   --rot: 2deg; font-size: 0.88cqw; }
-#links        { top: 71%; left: 11%;  width: 12.5%; --rot: 6deg; }
-#publications { top: 57%; left: 49.5%; width: 35%;  --rot: -3deg; }
+#photo-album  { top: 11%; left: 7.5%; width: 21%;   --rot: -5deg; }
+#summary      { top: 9%;  left: 42%;  width: 23%;   --rot: 2deg; font-size: 0.75cqw; }
+#links        { top: 72%; left: 12%;  width: 10.5%; --rot: 6deg; }
+#publications { top: 58%; left: 52%;  width: 30%;   --rot: -3deg; }
 
 .newspaper {
   width: 320px;
@@ -102,7 +102,7 @@ figure {
 .note {
   background: #fdf3a7;
   font-family: "Caveat", cursive;
-  font-size: 1cqw;
+  font-size: 0.85cqw;
   line-height: 1.2;
 }
 
@@ -120,14 +120,14 @@ figure {
 }
 
 .note a {
-  color: #1a3d8f;
+  color: #0b2560;
 }
 
 .polaroid {
   background: #fff;
-  padding: 0.8cqw 0.8cqw 1.25cqw;
+  padding: 0.7cqw 0.7cqw 1.05cqw;
   font-family: "Caveat", cursive;
-  font-size: 1cqw;
+  font-size: 0.85cqw;
   text-align: center;
 }
 
@@ -188,12 +188,14 @@ figure {
 
 .hint {
   position: absolute;
-  top: 84%;
-  left: 29%;
+  top: 81%;
+  left: 23.5%;
   margin: 0;
   font-family: "Caveat", cursive;
-  font-size: 2cqw;
-  color: #f4ead2;
+  font-size: 3cqw;
+  font-weight: 700;
+  color: #ffd84a;
+  text-shadow: 0 0 1cqw rgba(255, 216, 74, 0.45), 0 2px 4px rgba(0, 0, 0, 0.6);
   transform: rotate(-4deg);
   pointer-events: none;
   animation: hint-bob 2.4s ease-in-out infinite;
@@ -205,8 +207,8 @@ figure {
 }
 
 @keyframes hint-bob {
-  0%, 100% { translate: 0 0; }
-  50% { translate: 0 -0.4cqw; }
+  0%, 100% { translate: 0 0; scale: 1; }
+  50% { translate: 0 -0.5cqw; scale: 1.06; }
 }
 
 @media (max-width: 760px) {

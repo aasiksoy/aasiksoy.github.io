@@ -12,7 +12,7 @@ function zoomIn(card) {
     const centerX = card.offsetLeft + card.offsetWidth / 2;
     const centerY = card.offsetTop + card.offsetHeight / 2;
     const scale = Math.min(
-        3,
+        4,
         (window.innerWidth * 0.85) / card.offsetWidth,
         (window.innerHeight * 0.85) / card.offsetHeight
     );
