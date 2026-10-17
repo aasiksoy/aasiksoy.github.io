@@ -71,10 +71,10 @@ figure {
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
 }
 
-#photo-album  { top: 11%; left: 7.5%; width: 21%;   --rot: -5deg; }
-#summary      { top: 9%;  left: 42%;  width: 23%;   --rot: 2deg; font-size: 0.75cqw; }
-#links        { top: 72%; left: 12%;  width: 10.5%; --rot: 6deg; }
-#publications { top: 58%; left: 52%;  width: 30%;   --rot: -3deg; }
+#photo-album  { top: 5%; left: 22.5%; width: 21%; --rot: 4deg; }
+#summary { top: 38%;  left: 28%;  width: 29%;  --rot: -9deg; font-size: 0.75cqw; }
+#links {top: 80%;left: 29%;width: 10.5%;--rot: -12deg;}
+#publications {top: 36%;left: 68%; width: 25%; --rot: 10deg;}
 
 .newspaper {
   width: 320px;
