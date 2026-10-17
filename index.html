@@ -2,54 +2,55 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="css/style.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Azra Asiksoy · Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
     <div class="viewport">
-    <div class="board"> 
-        <svg class="strings"></svg>
-        <div id = "summary" class="card newspaper">
-            <h3>Summary</h3>
-            <p>Welcome to my portfolio! I am a Master's student in Software Engineering focusing on AI 
-                Engineering at KU Leuven. Here, you can browse my publications, github profile, my linkedin profile, and some of my photoraphy.
-                A little bit about me:
-                My master thesis includes medical imaging for adaptive proton therapy with IBA and I am currently working as a research intern on predicting SOH of battery packs using 
-                synthetic and real battery data at Brubotics-imec-VUB. I am passionate about AI and mathematics and their applications in various fields, especially 
-                in energy and healthcare, and areas such as but not limited to computer vision, deep learning, image processing. I am proficient in Python, Java, C, C++, Javascript, HTML, and CSS.</p>
+        <div class="board">
+            <svg class="strings"></svg>
 
-        <div id = "links" class="card note">
-            <h3>Links</h3>
-            <p>Here are the links to my LinkedIn profile as well as my GitHub:</p>
-            <a href="https://www.linkedin.com/in/azra-asiksoy-624733231">LinkedIn</a>
-            <a href="https://github.com/azraasiksoy">GitHub</a>
-        </div>
+            <div id="summary" class="card note">
+                <h3>Summary</h3>
+                <p>Welcome to my portfolio! I am a Master's student in Software Engineering at KU Leuven, focusing on AI Engineering. </p>
+                <p>My master thesis, with IBA, applies medical imaging to adaptive proton therapy with predictive and explainable AI. I am also a research intern at Brubotics-imec-VUB, predicting the state of health of battery packs using synthetic and real battery data using transfer learning as well as physics guided neural networks.</p>
+                <p>I am passionate about AI and mathematics and their applications in energy and healthcare, especially computer vision, deep learning and image processing.</p>
+                <p>Languages: Python, Java, C, C++, JavaScript, HTML, CSS.</p>
+            </div>
 
-        <div id = "photo-album" class="card polaroid">
-            <h3>Photo Album</h3>
-            <p>Here are some photos from my travels:</p>
-        </div>
+            <div id="links" class="card note">
+                <h3>Links</h3>
+                <a href="https://www.linkedin.com/in/azra-asiksoy-624733231" target="_blank">LinkedIn</a><br>
+                <a href="https://github.com/aasiksoy" target="_blank">GitHub</a>
+            </div>
 
-        <div id = "publications" class="card note">
-            <h3>Publications</h3>
-            <p>Here are my published research papers:</p>
-            <a href="https://doi.org/10.1109/AAIML67890.2026.11498079">Treating the Image as a System: A Hybrid Signal-AI Approach to Mammogram Analysis</a>
-            <p >In this paper, I propose a hybrid signal-AI approach to mammogram analysis that treats the image as a system. 
-                The approach combines traditional signal processing techniques with deep learning methods to improve the accuracy of mammogram analysis. 
-                I also provide a detailed analysis of the performance of the proposed approach and compare it with other state-of-the-art methods. 
-                Presented in The 2026 International Conference on Artificial Intelligence and Machine Learning (AAIML 2026), published in conference proceedings and IEEE Xplore.</p>
-            <a href="https://doi.org/10.1049/icp.2022.2555"> A new mathematical probability based card counting strategy for blackjack using python</a>
-            <p>In this paper, we propose a new mathematical probability-based card counting strategy for blackjack using Python. 
-                The strategy is based on the concept of probability and uses a simple algorithm to keep track of the cards that have been played. 
-                We also provide a detailed analysis of the performance of the strategy and compare it with other popular card counting strategies. 
-                Presented in The International Conference on Forthcoming Networks and Sustainability (FoNeS 2022), published in IET Conference Proceedings, 
-                available also in IEEEXplore.</p>        
+            <div id="photo-album" class="card polaroid">
+                <figure>
+                    <div class="album-window">
+                        <img id="album-photo" src="images/photos/photo1.jpg" alt="">
+                        <button id="prev-photo" class="album-arrow" aria-label="Previous photo">‹</button>
+                        <button id="next-photo" class="album-arrow" aria-label="Next photo">›</button>
+                    </div>
+                    <figcaption id="album-caption"></figcaption>
+                </figure>
+            </div>
+
+            <div id="publications" class="card note">
+                <h3>Publications</h3>
+
+                <a href="https://doi.org/10.1109/AAIML67890.2026.11498079" target="_blank">Treating the Image as a System: A Hybrid Signal-AI Approach to Mammogram Analysis</a>
+                <p>A hybrid approach combining signal processing and deep learning to improve mammogram analysis. Presented at AAIML 2026, published in IEEE Xplore.</p>
+
+                <a href="https://doi.org/10.1049/icp.2022.2555" target="_blank">A New Mathematical Probability Based Card Counting Strategy for Blackjack Using Python</a>
+                <p>A probability-based card counting strategy implemented in Python. Presented at FoNeS 2022, published in IET Conference Proceedings and IEEE Xplore.</p>
+            </div>
         </div>
     </div>
-    </div>
+
     <script src="js/board.js"></script>
 </body>
 </html>
