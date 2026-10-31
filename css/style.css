@@ -1,17 +1,81 @@
+/* ==========================================================================
+   Design tokens
+   Every color, font and shadow lives here so the look can be tuned in one place.
+   Sizes in cqw scale with the board (1cqw = 1% of the board's width).
+   ========================================================================== */
+:root {
+  /* Board */
+  --board: #231812;
+
+  /* Paper */
+  --paper: #efe8da;
+  --paper-white: #f7f4ee;
+  --paper-manila: #e2d3b0;
+  --photo-bg: #15110f;
+  --tape: rgba(236, 226, 200, 0.62);
+  --tape-shine: rgba(255, 255, 255, 0.25);
+
+  /* Ink */
+  --ink: #1f1a17;
+  --ink-soft: #5f554c;
+  --rule: rgba(31, 26, 23, 0.16);
+
+  /* Accent (oxblood) */
+  --accent: #9b1c1c;
+  --accent-dark: #741212;
+  --accent-tint: rgba(155, 28, 28, 0.14);
+  --on-accent: #f7f1e6;
+  --focus-on-board: #f3e6c8;
+
+  /* Push pin */
+  --pin-light: #f08a7a;
+  --pin: #b8322a;
+  --pin-dark: #4f0c0c;
+
+  /* Fonts */
+  --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-label: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --font-hand: "Caveat", cursive;
+
+  /* Shadows: a tight contact shadow layered under a soft ambient one */
+  --shadow-card:
+    0 0.05cqw 0.1cqw rgba(0, 0, 0, 0.35),
+    0 0.35cqw 0.7cqw rgba(0, 0, 0, 0.26),
+    0 1.2cqw 2.4cqw rgba(0, 0, 0, 0.3);
+  --shadow-card-lift:
+    0 0.1cqw 0.2cqw rgba(0, 0, 0, 0.3),
+    0 0.8cqw 1.4cqw rgba(0, 0, 0, 0.3),
+    0 2.4cqw 4cqw rgba(0, 0, 0, 0.38);
+  --shadow-curl: 0.5cqw 0.9cqw 0.7cqw -0.5cqw rgba(0, 0, 0, 0.55);
+  --shadow-pin: 0.12cqw 0.22cqw 0.2cqw rgba(0, 0, 0, 0.55);
+  --shadow-small: 0 0.1cqw 0.25cqw rgba(0, 0, 0, 0.3);
+
+  /* Paper texture: tiny SVG noise, drawn at low opacity */
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .14 0 0 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --paper-light: linear-gradient(170deg, rgba(255, 255, 255, 0.35), transparent 45%, rgba(0, 0, 0, 0.04));
+
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  font-family: Georgia, serif;
-  color: #222;
+  background: var(--board);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
 }
 
 figure {
   margin: 0;
 }
 
+/* ==========================================================================
+   Board
+   ========================================================================== */
 .viewport {
   position: relative;
   display: flex;
@@ -20,7 +84,7 @@ figure {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  background: #231812;
+  background: var(--board);
 }
 
 .board {
@@ -32,7 +96,7 @@ figure {
   background-image: url("../images/board.jpg");
   background-size: 100% 100%;
   transform-origin: 0 0;
-  transition: transform 0.8s ease;
+  transition: transform 0.8s var(--ease-out);
 }
 
 .strings {
@@ -43,102 +107,195 @@ figure {
   pointer-events: none;
 }
 
+/* ==========================================================================
+   Cards
+   `rotate` and `translate` are used as separate properties (instead of one
+   `transform`) so the hover lift never overwrites the card's tilt.
+   ========================================================================== */
 .card {
   position: absolute;
-  padding: 0.85cqw;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.4);
-  transform: rotate(var(--rot, 0deg));
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  cursor: grab;
+  padding: 1.1cqw 1.25cqw;
+  border-radius: 0.12cqw;
+  background-color: var(--paper);
+  background-image: var(--paper-grain), var(--paper-light);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--card-font, 0.68cqw);
+  line-height: 1.55;
+  box-shadow: var(--curl, 0 0 #0000), var(--shadow-card);
+  rotate: var(--rot, 0deg);
+  transition: translate 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
+  cursor: pointer;
   user-select: none;
 }
 
-.card:hover {
-  transform: rotate(var(--rot, 0deg)) scale(1.04);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5);
+.card:hover,
+.card:focus-visible {
+  translate: 0 -0.35cqw;
+  box-shadow: var(--curl, 0 0 #0000), var(--shadow-card-lift);
 }
 
+.card:focus-visible {
+  outline: 0.15cqw solid var(--focus-on-board);
+  outline-offset: 0.35cqw;
+}
+
+.card.zoomed {
+  translate: none;
+  cursor: default;
+  user-select: text;
+}
+
+/* Push pin (default for every card) */
 .card::before {
   content: "";
   position: absolute;
-  top: -8px;
+  z-index: 2;
+  top: -0.35cqw;
   left: 50%;
-  width: 16px;
-  height: 16px;
-  margin-left: -8px;
+  width: 0.95cqw;
+  height: 0.95cqw;
+  margin-left: -0.475cqw;
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #ff6b5b, #a52a1f);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.5);
+  background: radial-gradient(circle at 35% 30%, var(--pin-light) 0, var(--pin) 32%, #8a1818 62%, var(--pin-dark) 100%);
+  box-shadow: var(--shadow-pin);
 }
 
-#photo-album  { top: 5%; left: 22.5%; width: 21%; --rot: 4deg; }
-#summary { top: 38%;  left: 28%;  width: 29%;  --rot: -9deg; font-size: 0.75cqw; }
-#links {top: 80%;left: 29%;width: 10.5%;--rot: -12deg;}
-#publications {top: 36%;left: 68%; width: 25%; --rot: 10deg;}
-
-.newspaper {
-  width: 320px;
-  background: #f1e9d2;
-  font-family: "Times New Roman", Georgia, serif;
+/* Lifted bottom-right corner: a darker fold on the paper plus an offset shadow */
+#summary,
+#publications {
+  --curl: var(--shadow-curl);
+  background-image:
+    linear-gradient(315deg, rgba(0, 0, 0, 0.1), transparent 9%),
+    var(--paper-grain),
+    var(--paper-light);
 }
 
-.newspaper h2 {
-  margin: 0 0 8px;
-  font-size: 1.6rem;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-bottom: 2px solid #222;
+/* Positions on the board */
+#photo-album  { top: 5%;  left: 22.5%; width: 21%;   --rot: 4deg; }
+#summary      { top: 38%; left: 28%;   width: 29%;   --rot: -9deg; --card-font: 0.62cqw; }
+#links        { top: 80%; left: 29%;   width: 10.5%; --rot: -12deg; --card-font: 0.7cqw; }
+#publications { top: 36%; left: 68%;   width: 25%;   --rot: 10deg; }
+
+#publications {
+  background-color: var(--paper-manila);
 }
 
-.newspaper p {
-  margin: 0;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  column-count: 2;
-  column-gap: 14px;
-  text-align: justify;
+/* A strip of tape over the bottom-left corner of the publications card */
+#publications::after {
+  content: "";
+  position: absolute;
+  bottom: 0.2cqw;
+  left: -1.1cqw;
+  width: 4cqw;
+  height: 1.2cqw;
+  background: linear-gradient(180deg, var(--tape-shine), transparent 60%), var(--tape);
+  rotate: 42deg;
+  clip-path: polygon(3% 0, 97% 0, 100% 25%, 97% 50%, 100% 75%, 97% 100%, 3% 100%, 0 75%, 3% 50%, 0 25%);
 }
 
-.note {
-  background: #fdf3a7;
-  font-family: "Caveat", cursive;
-  font-size: 0.85cqw;
-  line-height: 1.2;
-}
-
+/* ==========================================================================
+   Note cards (summary, links, publications)
+   ========================================================================== */
 .note h3 {
-  margin: 0 0 0.3em;
-  font-size: 1.4em;
+  margin: 0 0 0.9em;
+  padding-bottom: 0.55em;
+  border-bottom: 0.06cqw solid var(--rule);
+  /* short accent bar sitting on top of the hairline rule */
+  background: linear-gradient(var(--accent), var(--accent)) left bottom / 2.4em 0.18em no-repeat;
+  font-family: var(--font-label);
+  font-size: 1.05em;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .note p {
-  margin: 0 0 0.5em;
+  margin: 0 0 0.75em;
 }
 
 .note p:last-child {
   margin-bottom: 0;
 }
 
+/* Links: a thin accent underline that fills into a highlighter on hover */
 .note a {
-  color: #0b2560;
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+  background-image:
+    linear-gradient(var(--accent), var(--accent)),
+    linear-gradient(var(--accent-tint), var(--accent-tint));
+  background-position: 0 100%, 0 100%;
+  background-size: 100% 0.08em, 100% 0;
+  background-repeat: no-repeat;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size 0.25s var(--ease-out), color 0.25s var(--ease-out);
 }
 
+.note a:hover,
+.note a:focus-visible {
+  color: var(--accent-dark);
+  background-size: 100% 0.08em, 100% 100%;
+}
+
+.note a:focus-visible {
+  outline: 0.1cqw solid var(--accent);
+  outline-offset: 0.15em;
+  border-radius: 0.1em;
+}
+
+.note a[target="_blank"]::after {
+  content: "\2197";
+  margin-left: 0.25em;
+  font-size: 0.85em;
+}
+
+#links a {
+  display: inline-block;
+  margin-top: 0.35em;
+}
+
+/* ==========================================================================
+   Polaroid + carousel
+   ========================================================================== */
 .polaroid {
-  background: #fff;
-  padding: 0.7cqw 0.7cqw 1.05cqw;
-  font-family: "Caveat", cursive;
+  padding: 0.75cqw 0.75cqw 0.9cqw;
+  background-color: var(--paper-white);
   font-size: 0.85cqw;
   text-align: center;
 }
 
+/* Tape instead of a pin */
+.polaroid::before {
+  top: -0.65cqw;
+  width: 6cqw;
+  height: 1.5cqw;
+  margin-left: -3cqw;
+  border-radius: 0;
+  background: linear-gradient(180deg, var(--tape-shine), transparent 60%), var(--tape);
+  box-shadow: none;
+  rotate: -3deg;
+  clip-path: polygon(2% 0, 98% 0, 100% 20%, 97% 40%, 100% 60%, 97% 80%, 100% 100%, 2% 100%, 0 80%, 3% 60%, 0 40%, 3% 20%);
+}
+
 .polaroid figcaption {
-  margin-top: 0.5em;
+  margin-top: 0.45em;
+  color: var(--ink-soft);
+  font-family: var(--font-hand);
+  font-size: 1.35em;
+  font-weight: 500;
+  line-height: 1.1;
 }
 
 .album-window {
   position: relative;
   aspect-ratio: 16 / 9;
-  background: #1c1c1c;
+  overflow: hidden;
+  background: var(--photo-bg);
+  box-shadow: inset 0 0 0.3cqw rgba(0, 0, 0, 0.6);
 }
 
 .polaroid img {
@@ -151,52 +308,104 @@ figure {
 .album-arrow {
   position: absolute;
   top: 50%;
-  transform: translateY(-50%);
-  width: 1.8em;
-  height: 1.8em;
-  padding: 0;
-  border: none;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 1.9em;
+  height: 1.9em;
+  padding: 0 0 0.12em;
+  border: 0.05cqw solid rgba(255, 255, 255, 0.2);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.75);
-  color: #222;
+  background: rgba(20, 15, 12, 0.55);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  color: var(--paper-white);
+  font-family: var(--font-label);
   font-size: 1em;
   line-height: 1;
+  opacity: 0.8;
   cursor: pointer;
+  transition: background-color 0.2s ease, opacity 0.2s ease, scale 0.2s var(--ease-out);
 }
 
-#prev-photo { left: 6px; }
-#next-photo { right: 6px; }
+.album-arrow:hover,
+.album-arrow:focus-visible {
+  background: var(--accent);
+  opacity: 1;
+  scale: 1.08;
+}
 
+.album-arrow:focus-visible {
+  outline: 0.12cqw solid var(--paper-white);
+  outline-offset: 0.12cqw;
+}
+
+#prev-photo { left: 0.5em; }
+#next-photo { right: 0.5em; }
+
+/* ==========================================================================
+   Back tag (added to every card by board.js)
+   Sized in cqw, not em, so it looks the same on every card.
+   ========================================================================== */
 .back-tag {
   display: none;
   position: absolute;
-  top: 6px;
-  right: 6px;
-  padding: 2px 8px;
-  border: 1px solid #fff5ed;
-  border-radius: 4px;
-  background: #570000;
-  color: #fff5ed;
-  font-family: "Caveat", cursive;
-  font-size: 0.9em;
+  z-index: 3;
+  top: 0.5cqw;
+  right: 0.5cqw;
+  padding: 0.35em 0.75em;
+  border: 0;
+  border-radius: 0.25em;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-label);
+  font-size: 0.5cqw;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-small);
   cursor: pointer;
+  transition: background-color 0.2s ease, translate 0.2s var(--ease-out);
+}
+
+.back-tag::before {
+  content: "\2190\00a0";
+}
+
+.back-tag:hover,
+.back-tag:focus-visible {
+  background: var(--accent-dark);
+  translate: -0.08cqw 0;
+}
+
+.back-tag:focus-visible {
+  outline: 0.08cqw solid var(--accent);
+  outline-offset: 0.1cqw;
 }
 
 .card.zoomed .back-tag {
   display: block;
 }
 
+/* ==========================================================================
+   Hint label
+   ========================================================================== */
 .hint {
   position: absolute;
-  top: 70%;
-  left: 20.5%;
+  top: 50%;
+  left: 3%;
   margin: 0;
-  font-family: "Caveat", cursive;
-  font-size: 3cqw;
-  font-weight: 700;
-  color: #ffd84a;
-  text-shadow: 0 0 1cqw rgba(255, 216, 74, 0.45), 0 2px 4px rgba(0, 0, 0, 0.6);
-  transform: rotate(-4deg);
+  padding: 0.55em 1em;
+  border-radius: 0.2em;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-family: var(--font-label);
+  font-size: 0.8cqw;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow: var(--shadow-card);
+  rotate: -4deg;
   pointer-events: none;
   animation: hint-bob 2.4s ease-in-out infinite;
   transition: opacity 0.6s ease;
@@ -207,10 +416,27 @@ figure {
 }
 
 @keyframes hint-bob {
-  0%, 100% { translate: 0 0; scale: 1; }
-  50% { translate: 0 -0.5cqw; scale: 1.06; }
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -0.4cqw; }
 }
 
+/* ==========================================================================
+   Reduced motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .hint {
+    animation: none;
+  }
+
+  .board,
+  .card {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Small screens (reworked in the mobile phase)
+   ========================================================================== */
 @media (max-width: 760px) {
   .hint {
     display: none;
@@ -237,7 +463,15 @@ figure {
   }
 
   .card {
-    padding: 14px;
+    padding: 18px;
+    font-size: 16px;
+  }
+
+  .card::before {
+    top: -6px;
+    width: 16px;
+    height: 16px;
+    margin-left: -8px;
   }
 
   .card,
@@ -253,12 +487,14 @@ figure {
     --rot: -1deg;
   }
 
-  .note,
-  .polaroid {
-    font-size: 18px;
-  }
-
   .polaroid {
     padding: 10px 10px 16px;
+  }
+
+  .polaroid::before {
+    top: -10px;
+    width: 96px;
+    height: 24px;
+    margin-left: -48px;
   }
 }

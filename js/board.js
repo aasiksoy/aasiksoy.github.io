@@ -11,10 +11,16 @@ function zoomIn(card) {
     }
     const centerX = card.offsetLeft + card.offsetWidth / 2;
     const centerY = card.offsetTop + card.offsetHeight / 2;
+    // A tilted card takes up more room than its unrotated box, so fit its rotated size.
+    const angle = (parseFloat(getComputedStyle(card).rotate) || 0) * Math.PI / 180;
+    const cos = Math.abs(Math.cos(angle));
+    const sin = Math.abs(Math.sin(angle));
+    const fitWidth = card.offsetWidth * cos + card.offsetHeight * sin;
+    const fitHeight = card.offsetWidth * sin + card.offsetHeight * cos;
     const scale = Math.min(
         4,
-        (window.innerWidth * 0.85) / card.offsetWidth,
-        (window.innerHeight * 0.85) / card.offsetHeight
+        (window.innerWidth * 0.85) / fitWidth,
+        (window.innerHeight * 0.85) / fitHeight
     );
     const translateX = window.innerWidth / 2 - board.offsetLeft - centerX * scale;
     const translateY = window.innerHeight / 2 - board.offsetTop - centerY * scale;
@@ -39,8 +45,18 @@ cards.forEach((card) => {
   backTag.addEventListener("click", (e) => {
     e.stopPropagation();
     zoomOut();
+    card.focus({ preventScroll: true });
   });
   card.appendChild(backTag);
+
+  // Make cards reachable with Tab and openable with Enter or Space.
+  card.tabIndex = 0;
+  card.addEventListener("keydown", (e) => {
+    if (e.target === card && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      card.click();
+    }
+  });
 
   card.addEventListener("click", () => {
     document.querySelector(".hint").classList.add("hidden");
