@@ -1,46 +1,31 @@
-/* ==========================================================================
-   Design tokens
-   Every color, font and shadow lives here so the look can be tuned in one place.
-   Sizes in cqw scale with the board (1cqw = 1% of the board's width).
-   ========================================================================== */
 :root {
-  /* Board */
   --board: #231812;
 
-  /* Paper */
-  --paper: #efe8da;
-  --paper-white: #f7f4ee;
-  --paper-manila: #e2d3b0;
+  --paper: #f3ead5;
+  --paper-white: #faf7f0;
   --photo-bg: #15110f;
   --tape: rgba(236, 226, 200, 0.62);
   --tape-shine: rgba(255, 255, 255, 0.25);
 
-  /* Ink */
   --ink: #1f1a17;
   --ink-soft: #5f554c;
 
-  /* Accent (oxblood) */
   --accent: #9b1c1c;
   --accent-dark: #741212;
   --accent-tint: rgba(155, 28, 28, 0.14);
   --on-accent: #f7f1e6;
   --focus-on-board: #f3e6c8;
 
-  /* Push pin */
   --pin-light: #f08a7a;
   --pin: #b8322a;
   --pin-mid: #8a1818;
   --pin-dark: #4f0c0c;
 
-  /* Red strings: same red family as the painted ones, a bit thicker, with a shadow */
   --string: #c8141f;
   --string-shadow: rgba(0, 0, 0, 0.4);
 
-  /* Fonts */
-  /* A worn typewriter face, with ink smudges built in */
   --font-body: "Special Elite", "Courier New", monospace;
 
-  /* Shadows: a tight contact shadow layered under a soft ambient one */
   --shadow-card:
     0 0.08cqw 0.15cqw rgba(0, 0, 0, 0.4),
     0 0.6cqw 1.2cqw rgba(0, 0, 0, 0.35);
@@ -51,14 +36,12 @@
   --shadow-pin: 0.12cqw 0.22cqw 0.2cqw rgba(0, 0, 0, 0.55);
   --shadow-small: 0 0.1cqw 0.25cqw rgba(0, 0, 0, 0.3);
 
-  /* Paper texture: a small noise tile, sized with the board so it zooms with the cards */
   --paper-grain: url("../images/paper-grain.png");
   --grain-size: 5cqw;
   --paper-light: linear-gradient(170deg, rgba(255, 255, 255, 0.35), transparent 45%, rgba(0, 0, 0, 0.04));
 
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
 
-  /* Entrance timing: cards drop one by one, then the strings draw in */
   --drop-start: 0.3s;
   --drop-gap: 0.18s;
   --drop-time: 0.75s;
@@ -80,9 +63,6 @@ figure {
   margin: 0;
 }
 
-/* ==========================================================================
-   Board
-   ========================================================================== */
 .viewport {
   position: relative;
   display: flex;
@@ -100,12 +80,9 @@ figure {
   width: min(100vw, 100vh * 16 / 9);
   height: min(100vh, 100vw * 9 / 16);
   container-type: size;
-  /* A 3000px copy of board.jpg: looks the same, but loads ~4x faster and
-     zooms smoothly (the 6000px original made zoom frames stall). */
   background-image: url("../images/board-web.jpg");
   background-size: 100% 100%;
   transform-origin: 0 0;
-  /* Hidden until board.js adds .is-ready (image, photo and fonts all loaded) */
   opacity: 0;
   transition: transform 0.8s var(--ease-out), opacity 0.5s ease;
 }
@@ -114,11 +91,6 @@ figure {
   opacity: 1;
 }
 
-/* ==========================================================================
-   Red strings (drawn by board.js)
-   The layer comes before the cards in the HTML, so strings pass behind them
-   and run out from under each pin.
-   ========================================================================== */
 .strings {
   --string-delay: calc(var(--drop-start) + 3 * var(--drop-gap) + var(--drop-time) + 0.15s);
   position: absolute;
@@ -133,8 +105,6 @@ figure {
 .string-shadow {
   fill: none;
   stroke-linecap: round;
-  /* With pathLength="1", a dash of 1 is the whole string. Offsetting it by 1
-     hides it; animating the offset to 0 draws it in. */
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
 }
@@ -147,7 +117,6 @@ figure {
   stroke: var(--string-shadow);
 }
 
-/* board.js adds .is-ready once the image and fonts have loaded */
 .is-ready .string,
 .is-ready .string-shadow {
   animation: draw-string 1.2s ease-in-out forwards;
@@ -158,11 +127,6 @@ figure {
   to { stroke-dashoffset: 0; }
 }
 
-/* ==========================================================================
-   Cards
-   `rotate` and `translate` are used as separate properties (instead of one
-   `transform`) so the hover lift never overwrites the card's tilt.
-   ========================================================================== */
 .card {
   position: absolute;
   padding: 1.1cqw 1.25cqw;
@@ -198,7 +162,6 @@ figure {
   user-select: text;
 }
 
-/* Push pin (default for every card) */
 .card::before {
   content: "";
   position: absolute;
@@ -213,7 +176,6 @@ figure {
   box-shadow: var(--shadow-pin);
 }
 
-/* Lifted bottom-right corner: a darker fold on the paper plus an offset shadow */
 #summary,
 #publications {
   --curl: var(--shadow-curl);
@@ -224,21 +186,11 @@ figure {
   background-size: 100% 100%, 100% 100%, var(--grain-size);
 }
 
-/* Positions on the board */
 #photo-album  { top: 5%;  left: 22.5%; width: 21%;   --rot: 4deg; }
 #summary      { top: 34.5%; left: 20%; width: 37%;   --rot: -6deg; --card-font: 0.62cqw; --pin-x: 76%; }
 #links        { top: 80%; left: 29%;   width: 10.5%; --rot: -12deg; --card-font: 0.7cqw; }
 #publications { top: 36%; left: 68%;   width: 25%;   --rot: 10deg; --pin-x: 14%; }
 
-#publications {
-  background-color: var(--paper-manila);
-}
-
-/* ==========================================================================
-   Entrance: each card is dropped onto the board, bounces, and gets pinned
-   (or taped). Runs once board.js adds .is-ready. `backwards` keeps a card
-   hidden at its first keyframe until its turn comes.
-   ========================================================================== */
 #photo-album  { --order: 0; }
 #summary      { --order: 1; }
 #publications { --order: 2; }
@@ -249,12 +201,10 @@ figure {
   animation: card-drop var(--drop-time) var(--drop-delay) backwards;
 }
 
-/* The pin pushes in just as the card lands */
 .is-ready .card::before {
   animation: pin-push 0.35s calc(var(--drop-delay) + var(--drop-time) * 0.55) var(--ease-out) backwards;
 }
 
-/* Tape gets pressed down, stretching out from the middle */
 .is-ready .polaroid::before,
 .is-ready #publications::after {
   animation: tape-press 0.4s calc(var(--drop-delay) + var(--drop-time) * 0.55) var(--ease-out) backwards;
@@ -278,7 +228,6 @@ figure {
   100% { opacity: 1; scale: 1; }
 }
 
-/* A little wiggle of the pin when you hover a pinned card */
 .note:hover::before {
   animation: pin-wiggle 0.45s var(--ease-out);
 }
@@ -289,7 +238,6 @@ figure {
   70% { scale: 0.95; }
 }
 
-/* A strip of tape over the bottom-left corner of the publications card */
 #publications::after {
   content: "";
   position: absolute;
@@ -302,9 +250,6 @@ figure {
   clip-path: polygon(3% 0, 97% 0, 100% 25%, 97% 50%, 100% 75%, 97% 100%, 3% 100%, 0 75%, 3% 50%, 0 25%);
 }
 
-/* ==========================================================================
-   Note cards (summary, links, publications)
-   ========================================================================== */
 .note h3 {
   margin: 0 0 0.7em;
   font-family: var(--font-body);
@@ -323,7 +268,6 @@ figure {
   margin-bottom: 0;
 }
 
-/* Links: a thin accent underline that fills into a highlighter on hover */
 .note a {
   color: var(--accent);
   text-decoration: none;
@@ -361,9 +305,6 @@ figure {
   margin-top: 0.35em;
 }
 
-/* ==========================================================================
-   Polaroid + carousel
-   ========================================================================== */
 .polaroid {
   padding: 0.75cqw 0.75cqw 0.9cqw;
   background-color: var(--paper-white);
@@ -371,7 +312,6 @@ figure {
   text-align: center;
 }
 
-/* Tape instead of a pin */
 .polaroid::before {
   top: -0.65cqw;
   width: 6cqw;
@@ -408,7 +348,6 @@ figure {
   transition: opacity 0.18s ease;
 }
 
-/* Fade out while the next photo is fetched, then fade the new one in */
 .album-window.loading img {
   opacity: 0;
 }
@@ -449,10 +388,6 @@ figure {
 #prev-photo { left: 0.5em; }
 #next-photo { right: 0.5em; }
 
-/* ==========================================================================
-   Back tag (added to every card by board.js)
-   Sized in cqw, not em, so it looks the same on every card.
-   ========================================================================== */
 .back-tag {
   display: none;
   position: absolute;
@@ -473,10 +408,6 @@ figure {
   transition: background-color 0.2s ease, translate 0.2s var(--ease-out);
 }
 
-.back-tag::before {
-  content: "\2190\00a0";
-}
-
 .back-tag:hover,
 .back-tag:focus-visible {
   background: var(--accent-dark);
@@ -492,9 +423,6 @@ figure {
   display: block;
 }
 
-/* ==========================================================================
-   Hint label
-   ========================================================================== */
 .hint {
   position: absolute;
   top: 47%;
@@ -533,9 +461,6 @@ figure {
   50% { translate: 0 -0.4cqw; }
 }
 
-/* ==========================================================================
-   Reduced motion
-   ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   .hint,
   .is-ready .hint,
@@ -561,9 +486,6 @@ figure {
   }
 }
 
-/* ==========================================================================
-   Small screens (reworked in the mobile phase)
-   ========================================================================== */
 @media (max-width: 760px) {
   .hint,
   .strings {
