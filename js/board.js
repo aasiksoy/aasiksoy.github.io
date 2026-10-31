@@ -131,7 +131,9 @@ function showPhoto(index) {
   photoIndex = (index + photos.length) % photos.length;
   const requested = photoIndex;
   albumWindow.classList.add("loading");
-  loadPhoto(requested).then(() => {
+  // Wait for both the photo and the fade-out (0.18s in style.css) before swapping.
+  const fadedOut = new Promise((resolve) => setTimeout(resolve, 180));
+  Promise.all([loadPhoto(requested), fadedOut]).then(() => {
     if (requested !== photoIndex) {
       return; // the visitor already clicked on to another photo
     }

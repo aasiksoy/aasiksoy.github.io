@@ -18,7 +18,6 @@
   /* Ink */
   --ink: #1f1a17;
   --ink-soft: #5f554c;
-  --rule: rgba(31, 26, 23, 0.16);
 
   /* Accent (oxblood) */
   --accent: #9b1c1c;
@@ -38,12 +37,16 @@
   --string-shadow: rgba(0, 0, 0, 0.4);
 
   /* Fonts */
-  --font-body: "Libre Baskerville", Georgia, serif;
+  /* A worn typewriter face, with ink smudges built in */
+  --font-body: "Special Elite", "Courier New", monospace;
 
   /* Shadows: a tight contact shadow layered under a soft ambient one */
   --shadow-card:
     0 0.08cqw 0.15cqw rgba(0, 0, 0, 0.4),
     0 0.6cqw 1.2cqw rgba(0, 0, 0, 0.35);
+  --shadow-card-lift:
+    0 0.15cqw 0.3cqw rgba(0, 0, 0, 0.3),
+    0 1.4cqw 2.4cqw rgba(0, 0, 0, 0.4);
   --shadow-curl: 0.5cqw 0.9cqw 0.7cqw -0.5cqw rgba(0, 0, 0, 0.55);
   --shadow-pin: 0.12cqw 0.22cqw 0.2cqw rgba(0, 0, 0, 0.55);
   --shadow-small: 0 0.1cqw 0.25cqw rgba(0, 0, 0, 0.3);
@@ -54,6 +57,11 @@
   --paper-light: linear-gradient(170deg, rgba(255, 255, 255, 0.35), transparent 45%, rgba(0, 0, 0, 0.04));
 
   --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Entrance timing: cards drop one by one, then the strings draw in */
+  --drop-start: 0.3s;
+  --drop-gap: 0.18s;
+  --drop-time: 0.75s;
 }
 
 * {
@@ -112,6 +120,7 @@ figure {
    and run out from under each pin.
    ========================================================================== */
 .strings {
+  --string-delay: calc(var(--drop-start) + 3 * var(--drop-gap) + var(--drop-time) + 0.15s);
   position: absolute;
   inset: 0;
   width: 100%;
@@ -164,10 +173,10 @@ figure {
   color: var(--ink);
   font-family: var(--font-body);
   font-size: var(--card-font, 0.68cqw);
-  line-height: 1.55;
+  line-height: 1.5;
   box-shadow: var(--curl, 0 0 #0000), var(--shadow-card);
   rotate: var(--rot, 0deg);
-  transition: translate 0.25s var(--ease-out);
+  transition: translate 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out);
   cursor: pointer;
   user-select: none;
 }
@@ -175,6 +184,7 @@ figure {
 .card:hover,
 .card:focus-visible {
   translate: 0 -0.35cqw;
+  box-shadow: var(--curl, 0 0 #0000), var(--shadow-card-lift);
 }
 
 .card:focus-visible {
@@ -224,6 +234,61 @@ figure {
   background-color: var(--paper-manila);
 }
 
+/* ==========================================================================
+   Entrance: each card is dropped onto the board, bounces, and gets pinned
+   (or taped). Runs once board.js adds .is-ready. `backwards` keeps a card
+   hidden at its first keyframe until its turn comes.
+   ========================================================================== */
+#photo-album  { --order: 0; }
+#summary      { --order: 1; }
+#publications { --order: 2; }
+#links        { --order: 3; }
+
+.is-ready .card {
+  --drop-delay: calc(var(--drop-start) + var(--order) * var(--drop-gap));
+  animation: card-drop var(--drop-time) var(--drop-delay) backwards;
+}
+
+/* The pin pushes in just as the card lands */
+.is-ready .card::before {
+  animation: pin-push 0.35s calc(var(--drop-delay) + var(--drop-time) * 0.55) var(--ease-out) backwards;
+}
+
+/* Tape gets pressed down, stretching out from the middle */
+.is-ready .polaroid::before,
+.is-ready #publications::after {
+  animation: tape-press 0.4s calc(var(--drop-delay) + var(--drop-time) * 0.55) var(--ease-out) backwards;
+}
+
+@keyframes card-drop {
+  0%   { opacity: 0; translate: 0 -5cqw; scale: 1.12; animation-timing-function: cubic-bezier(0.5, 0, 0.9, 0.5); }
+  55%  { opacity: 1; translate: 0 0.25cqw; scale: 0.98; animation-timing-function: ease-out; }
+  78%  { translate: 0 -0.2cqw; scale: 1.01; animation-timing-function: ease-in-out; }
+  100% { translate: 0 0; scale: 1; }
+}
+
+@keyframes pin-push {
+  0%   { opacity: 0; scale: 2.4; }
+  60%  { opacity: 1; scale: 0.85; }
+  100% { scale: 1; }
+}
+
+@keyframes tape-press {
+  0%   { opacity: 0; scale: 0.2 1.3; }
+  100% { opacity: 1; scale: 1; }
+}
+
+/* A little wiggle of the pin when you hover a pinned card */
+.note:hover::before {
+  animation: pin-wiggle 0.45s var(--ease-out);
+}
+
+@keyframes pin-wiggle {
+  0%, 100% { scale: 1; }
+  40% { scale: 1.18; }
+  70% { scale: 0.95; }
+}
+
 /* A strip of tape over the bottom-left corner of the publications card */
 #publications::after {
   content: "";
@@ -241,14 +306,11 @@ figure {
    Note cards (summary, links, publications)
    ========================================================================== */
 .note h3 {
-  margin: 0 0 0.9em;
-  padding-bottom: 0.55em;
-  border-bottom: 0.06cqw solid var(--rule);
-  /* short accent bar sitting on top of the hairline rule */
-  background: linear-gradient(var(--accent), var(--accent)) left bottom / 2.4em 0.18em no-repeat;
+  margin: 0 0 0.7em;
   font-family: var(--font-body);
-  font-size: 1.05em;
-  letter-spacing: 0.08em;
+  font-size: 1.3em;
+  font-weight: 400;
+  letter-spacing: 0.06em;
   line-height: 1.2;
   text-transform: uppercase;
 }
@@ -264,7 +326,6 @@ figure {
 /* Links: a thin accent underline that fills into a highlighter on hover */
 .note a {
   color: var(--accent);
-  font-weight: 700;
   text-decoration: none;
   background-image:
     linear-gradient(var(--accent), var(--accent)),
@@ -328,7 +389,6 @@ figure {
   color: var(--ink-soft);
   font-family: var(--font-body);
   font-size: 1.05em;
-  font-style: italic;
   line-height: 1.2;
 }
 
@@ -345,12 +405,12 @@ figure {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.18s ease;
 }
 
-/* While the next photo downloads, dim the current one so the click feels answered */
+/* Fade out while the next photo is fetched, then fade the new one in */
 .album-window.loading img {
-  opacity: 0.45;
+  opacity: 0;
 }
 
 .album-arrow {
@@ -455,7 +515,13 @@ figure {
 }
 
 .is-ready .hint {
-  animation: hint-bob 2.4s ease-in-out infinite;
+  animation:
+    hint-in 0.5s calc(var(--drop-start) + 3 * var(--drop-gap) + var(--drop-time) + 1s) var(--ease-out) backwards,
+    hint-bob 2.4s calc(var(--drop-start) + 3 * var(--drop-gap) + var(--drop-time) + 1.5s) ease-in-out infinite;
+}
+
+@keyframes hint-in {
+  from { opacity: 0; scale: 0.6; }
 }
 
 .hint.hidden {
@@ -472,7 +538,12 @@ figure {
    ========================================================================== */
 @media (prefers-reduced-motion: reduce) {
   .hint,
-  .is-ready .hint {
+  .is-ready .hint,
+  .is-ready .card,
+  .is-ready .card::before,
+  .is-ready .polaroid::before,
+  .is-ready #publications::after,
+  .note:hover::before {
     animation: none;
   }
 
