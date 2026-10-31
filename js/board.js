@@ -1,13 +1,26 @@
 // ===========================================================================
-// RED STRINGS: which cards are connected.
-// Each pair is [fromId, toId]; the string draws itself from the first card's
-// pin to the second's. Card ids: "summary", "publications", "links", "photo-album".
+// RED STRINGS: what is connected to what.
+// Each pair is [from, to]; the string draws itself from the first to the second.
+// Use a card id ("summary", "publications", "links", "photo-album") or the
+// name of a pin painted in the background (see PAINTED_PINS below).
 // To move a card's pin along its top edge, set --pin-x on the card in style.css.
 // ===========================================================================
 const CONNECTIONS = [
-  ["photo-album", "summary"],
   ["summary", "publications"],
+  ["photo-album", "summary"],
+  ["publications", "newspaper"],
+  ["links", "map"],
 ];
+
+// Pins painted in board.jpg, as [left %, top %] of the board.
+const PAINTED_PINS = {
+  note: [12.55, 9.6],
+  detective: [54.75, 13.15],
+  newspaper: [95, 8.9],
+  map: [10.45, 80],
+  folder: [57.15, 68.7],
+  crime: [83.85, 75.6],
+};
 
 const cards = document.querySelectorAll('.card');
 const board = document.querySelector('.board');
@@ -95,11 +108,38 @@ const photos = Array.from({ length: photoCount }, (_, i) => ({
 
 let photoIndex = 0;
 const albumPhoto = document.getElementById("album-photo");
+const albumWindow = albumPhoto.parentElement;
+
+// Each photo is downloaded and decoded once, in the background, and remembered.
+const photoCache = new Map();
+function loadPhoto(index) {
+  if (!photoCache.has(index)) {
+    const img = new Image();
+    img.src = photos[index].src;
+    photoCache.set(index, img.decode().catch(() => {}));
+  }
+  return photoCache.get(index);
+}
+
+// Get the photos on either side ready, so the arrows respond instantly.
+function preloadNeighbours() {
+  loadPhoto((photoIndex + 1) % photos.length);
+  loadPhoto((photoIndex - 1 + photos.length) % photos.length);
+}
 
 function showPhoto(index) {
   photoIndex = (index + photos.length) % photos.length;
-  albumPhoto.src = photos[photoIndex].src;
-  albumPhoto.alt = photos[photoIndex].alt;
+  const requested = photoIndex;
+  albumWindow.classList.add("loading");
+  loadPhoto(requested).then(() => {
+    if (requested !== photoIndex) {
+      return; // the visitor already clicked on to another photo
+    }
+    albumPhoto.src = photos[requested].src;
+    albumPhoto.alt = photos[requested].alt;
+    albumWindow.classList.remove("loading");
+    preloadNeighbours();
+  });
 }
 
 document.getElementById("prev-photo").addEventListener("click", (e) => {
@@ -112,133 +152,90 @@ document.getElementById("next-photo").addEventListener("click", (e) => {
   showPhoto(photoIndex + 1);
 });
 
-showPhoto(0);
+albumPhoto.alt = photos[0].alt;
+photoCache.set(0, Promise.resolve());
 
 // ---------------------------------------------------------------------------
 // Red strings
-// Positions come from offsetLeft/offsetTop, which ignore the board's zoom
-// transform, so the strings only need redrawing when a card's size or
-// position changes, not while zooming.
+// Drawn behind the cards, from pin to pin. Positions come from offsetLeft /
+// offsetTop, which ignore the board's zoom transform, so strings only need
+// redrawing when a card's size or position changes, never while zooming.
 // ---------------------------------------------------------------------------
 const SVG_NS = "http://www.w3.org/2000/svg";
 const PIN_OFFSET = 0.125; // pin center below the card's top edge, in cqw (see .card::before)
 const stringsLayer = document.querySelector(".strings");
 const strings = [];
-const pins = new Map();
 
-function svgElement(name, className) {
-  const el = document.createElementNS(SVG_NS, name);
-  el.setAttribute("class", className);
-  return el;
+function svgPath(className, index) {
+  const path = document.createElementNS(SVG_NS, "path");
+  path.setAttribute("class", className);
+  // pathLength="1" lets the CSS draw animation use 0..1 instead of real lengths.
+  path.setAttribute("pathLength", "1");
+  path.style.setProperty("--i", index);
+  stringsLayer.append(path);
+  return path;
 }
 
-// Where a card's pin is on the board, taking the card's tilt and hover lift into account.
+// Where a pin is on the board: a painted one, or a card's (taking its tilt into account).
 function pinPosition(card) {
+  if (typeof card === "string") {
+    const [left, top] = PAINTED_PINS[card];
+    return { x: left / 100 * board.offsetWidth, y: top / 100 * board.offsetHeight };
+  }
   const style = getComputedStyle(card);
   const angle = (parseFloat(style.rotate) || 0) * Math.PI / 180;
-  const [liftX = 0, liftY = 0] = style.translate === "none" ? [] : style.translate.split(" ").map(parseFloat);
   const pinX = parseFloat(style.getPropertyValue("--pin-x")) || 50; // percent of card width
   // The pin's offset from the card's center, before the tilt...
   const dx = (pinX / 100 - 0.5) * card.offsetWidth;
   const dy = -card.offsetHeight / 2 + PIN_OFFSET * board.offsetWidth / 100;
   // ...rotated by the tilt, the same way CSS rotates the card around its center.
   return {
-    x: card.offsetLeft + card.offsetWidth / 2 + liftX + dx * Math.cos(angle) - dy * Math.sin(angle),
-    y: card.offsetTop + card.offsetHeight / 2 + liftY + dx * Math.sin(angle) + dy * Math.cos(angle),
+    x: card.offsetLeft + card.offsetWidth / 2 + dx * Math.cos(angle) - dy * Math.sin(angle),
+    y: card.offsetTop + card.offsetHeight / 2 + dx * Math.sin(angle) + dy * Math.cos(angle),
   };
 }
 
-function setupStrings() {
-  stringsLayer.innerHTML = `
-    <defs>
-      <radialGradient id="pin-gradient" cx="0.35" cy="0.3" r="0.75">
-        <stop offset="0" class="pin-stop-light" />
-        <stop offset="0.32" class="pin-stop" />
-        <stop offset="0.62" class="pin-stop-mid" />
-        <stop offset="1" class="pin-stop-dark" />
-      </radialGradient>
-    </defs>`;
-  const stringGroup = svgElement("g", "string-group");
-  const pinGroup = svgElement("g", "pin-group");
-  stringsLayer.append(stringGroup, pinGroup);
-
-  CONNECTIONS.forEach(([fromId, toId], i) => {
-    const from = document.getElementById(fromId);
-    const to = document.getElementById(toId);
-    if (!from || !to) {
-      console.warn(`String skipped: no card with id "${from ? toId : fromId}"`);
-      return;
-    }
-    // pathLength="1" lets the CSS draw animation use 0..1 instead of real lengths.
-    const shadow = svgElement("path", "string-shadow");
-    const line = svgElement("path", "string");
-    [shadow, line].forEach((path) => {
-      path.setAttribute("pathLength", "1");
-      path.style.setProperty("--i", i);
-      stringGroup.append(path);
-    });
-    strings.push({ from, to, shadow, line });
-
-    [from, to].forEach((card) => {
-      if (!pins.has(card)) {
-        const pin = svgElement("g", "pin");
-        pin.append(svgElement("circle", "pin-shadow"), svgElement("circle", "pin-head"));
-        pinGroup.append(pin);
-        pins.set(card, pin);
-      }
-    });
-  });
+// A card element, a painted pin's name, or null if the name is unknown.
+function findPin(name) {
+  return document.getElementById(name) || (name in PAINTED_PINS ? name : null);
 }
 
+CONNECTIONS.forEach(([fromName, toName], i) => {
+  const from = findPin(fromName);
+  const to = findPin(toName);
+  if (!from || !to) {
+    console.warn(`String skipped: no card or painted pin called "${from ? toName : fromName}"`);
+    return;
+  }
+  strings.push({ from, to, shadow: svgPath("string-shadow", i), line: svgPath("string", i) });
+});
+
 function drawStrings() {
-  const pinRadius = 0.475 * board.offsetWidth / 100;
+  const cqw = board.offsetWidth / 100;
   strings.forEach(({ from, to, shadow, line }) => {
     const a = pinPosition(from);
     const b = pinPosition(to);
-    // Let the string sag a little, like real thread.
-    const sag = Math.hypot(b.x - a.x, b.y - a.y) * 0.04;
-    const d = `M ${a.x} ${a.y} Q ${(a.x + b.x) / 2} ${(a.y + b.y) / 2 + sag} ${b.x} ${b.y}`;
-    shadow.setAttribute("d", d);
-    line.setAttribute("d", d);
-  });
-  pins.forEach((pin, card) => {
-    const { x, y } = pinPosition(card);
-    pin.setAttribute("transform", `translate(${x} ${y})`);
-    pin.querySelectorAll("circle").forEach((circle) => circle.setAttribute("r", pinRadius));
+    line.setAttribute("d", `M ${a.x} ${a.y} L ${b.x} ${b.y}`);
+    // The shadow is the same line nudged down and right (cheaper than a blur filter).
+    const sx = 0.06 * cqw;
+    const sy = 0.14 * cqw;
+    shadow.setAttribute("d", `M ${a.x + sx} ${a.y + sy} L ${b.x + sx} ${b.y + sy}`);
+    line.setAttribute("stroke-width", 0.16 * cqw);
+    shadow.setAttribute("stroke-width", 0.16 * cqw);
   });
 }
-
-setupStrings();
-drawStrings();
 
 // Redraw when the window resizes, fonts load, or anything else changes a card's size.
 const resizeObserver = new ResizeObserver(drawStrings);
 resizeObserver.observe(board);
 cards.forEach((card) => resizeObserver.observe(card));
 
-// Follow the pins while a card lifts on hover.
-let liftingCards = 0;
-function followLift() {
-  drawStrings();
-  if (liftingCards > 0) {
-    requestAnimationFrame(followLift);
-  }
-}
-cards.forEach((card) => {
-  card.addEventListener("transitionrun", (e) => {
-    if (e.target === card && e.propertyName === "translate") {
-      liftingCards++;
-      if (liftingCards === 1) {
-        requestAnimationFrame(followLift);
-      }
-    }
-  });
-  ["transitionend", "transitioncancel"].forEach((type) => {
-    card.addEventListener(type, (e) => {
-      if (e.target === card && e.propertyName === "translate") {
-        liftingCards = Math.max(0, liftingCards - 1);
-        drawStrings();
-      }
-    });
+// Start the animations only once the board image and fonts have arrived,
+// so they don't play while the page is still loading.
+window.addEventListener("load", () => {
+  document.fonts.ready.then(() => {
+    drawStrings();
+    board.classList.add("is-ready");
+    preloadNeighbours();
   });
 });
