@@ -10,9 +10,28 @@ const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").match
    ========================================================= */
 
 const PHOTOS = [
-  { src: "images/photos/photo1.jpg", caption: "Caption one", alt: "Describe photo one" },
-  { src: "images/photos/photo2.jpg", caption: "Caption two", alt: "Describe photo two" },
-  { src: "images/photos/photo3.jpg", caption: "Caption three", alt: "Describe photo three" },
+  { src: "images/photo1.jpg", alt: "" },
+  { src: "images/photo2.jpg", alt: "" },
+  { src: "images/photo3.jpg", alt: "" },
+  { src: "images/photo4.jpg", alt: "" },
+  { src: "images/photo5.jpg", alt: "" },
+  { src: "images/photo6.jpg", alt: "" },
+  { src: "images/photo7.jpg", alt: "" },
+  { src: "images/photo8.jpg", alt: "" },
+  { src: "images/photo9.jpg", alt: "" },
+  { src: "images/photo10.jpg", alt: "" },
+  { src: "images/photo11.jpg", alt: "" },
+  { src: "images/photo12.jpg", alt: "" },
+  { src: "images/photo13.jpg", alt: "" },
+  { src: "images/photo15.jpg", alt: "" },
+  { src: "images/photo19.jpg", alt: "" },
+  { src: "images/photo20.jpg", alt: "" },
+  { src: "images/photo21.jpg", alt: "" },
+  { src: "images/photo22.jpg", alt: "" },
+  { src: "images/photo23.jpg", alt: "" },
+  { src: "images/photo24.jpg", alt: "" },
+  { src: "images/photo25.jpg", alt: "" },
+  { src: "images/photo26.jpg", alt: "" },
 ];
 
 const SECTIONS = {
@@ -96,7 +115,6 @@ const SECTIONS = {
     drink: "About Me Chai",
     title: "Hi, I'm Azra",
     body: `
-      <p class="meta">Cyprus → Leuven → ?</p>
       <p>I'm a master's student at KU Leuven focusing on AI engineering. I love AI and mathematics, and
       especially how they apply to healthcare and sustainable energy: computer vision, deep learning
       and image processing are my favorite corners.</p>
@@ -820,7 +838,7 @@ function setupCarousel() {
     index = (i + PHOTOS.length) % PHOTOS.length;
     img.src = PHOTOS[index].src;
     img.alt = PHOTOS[index].alt;
-    caption.textContent = PHOTOS[index].caption;
+    caption.textContent = PHOTOS[index].caption || "";
     count.textContent = `${index + 1} / ${PHOTOS.length}`;
   }
   img.addEventListener("error", () => {
