@@ -19,7 +19,6 @@ const SECTIONS = {
   experience: {
     drink: "The Experience Roast",
     title: "Experience",
-    art: "leaf",
     body: `
       <h3>Master Thesis Intern · IBA</h3>
       <p class="meta">Louvain-la-Neuve · Oct 2026 – present · with KU Leuven</p>
@@ -56,7 +55,6 @@ const SECTIONS = {
   publications: {
     drink: "Published Espresso",
     title: "Publications",
-    art: "star",
     body: `
       <p>Research I've published and presented, from medical imaging to probability.</p>
       <h3><a href="https://doi.org/10.1109/AAIML67890.2026.11498079" target="_blank" rel="noopener">Treating the Image as a System: A Hybrid Signal-AI Approach to Mammogram Analysis</a></h3>
@@ -69,13 +67,11 @@ const SECTIONS = {
   photos: {
     drink: "Darkroom Mocha",
     title: "Photography",
-    art: "camera",
     body: "",
   },
   about: {
     drink: "About Me Chai",
     title: "Hi, I'm Azra",
-    art: "heart",
     body: `
       <p class="meta">Cyprus → Leuven → ?</p>
       <p>I'm a master's student at KU Leuven focusing on AI engineering. I love AI and mathematics, and
@@ -86,7 +82,6 @@ const SECTIONS = {
   contact: {
     drink: "Contact To Go",
     title: "Let's connect",
-    art: "plane",
     body: `
       <p>Feel free to reach out and connect.</p>
       <p><a href="https://www.linkedin.com/in/azra-asiksoy-624733231" target="_blank" rel="noopener">LinkedIn</a></p>
@@ -95,7 +90,6 @@ const SECTIONS = {
   books: {
     title: "On my bookshelf",
     label: "The bookshelf",
-    art: "book",
     body: `
       <p>A few books I'd recommend:</p>
       <ul>
@@ -107,7 +101,6 @@ const SECTIONS = {
   music: {
     title: "On the turntable",
     label: "The record player",
-    art: "note",
     body: `
       <p>Music I keep coming back to, and the best concerts I've been to:</p>
       <ul>
@@ -120,23 +113,6 @@ const SECTIONS = {
 
 const MENU_ORDER = ["experience", "publications", "photos", "about", "contact"];
 
-/* Latte art shapes, drawn in a 200 x 200 box centered on the coffee */
-const ART = {
-  leaf: [
-    "M100 142 L100 62",
-    "M100 66 C86 70 84 80 100 84 C116 80 114 70 100 66",
-    "M100 84 C80 88 78 100 100 104 C122 100 120 88 100 84",
-    "M100 104 C76 108 74 122 100 126 C126 122 124 108 100 104",
-  ],
-  bolt: ["M110 60 L82 106 L100 106 L90 142 L120 92 L102 92 Z"],
-  star: ["M100 62 L110 89 L138 89 L115 106 L124 134 L100 117 L76 134 L85 106 L62 89 L90 89 Z"],
-  swirl: ["M100 100 m0 -6 a6 6 0 1 1 -6 6 a12 12 0 1 1 12 12 a18 18 0 1 1 -18 -18 a24 24 0 1 1 24 24 a30 30 0 1 1 -30 -30"],
-  camera: ["M68 86 H132 V130 H68 Z", "M86 86 L93 74 H107 L114 86", "M100 108 m-14 0 a14 14 0 1 0 28 0 a14 14 0 1 0 -28 0"],
-  heart: ["M100 132 C68 108 62 82 82 76 C94 72 100 82 100 90 C100 82 106 72 118 76 C138 82 132 108 100 132 Z"],
-  plane: ["M64 104 L136 72 L114 136 L100 110 Z", "M100 110 L136 72"],
-  book: ["M100 80 C88 74 74 74 64 78 V126 C74 122 88 122 100 128 C112 122 126 122 136 126 V78 C126 74 112 74 100 80 Z", "M100 80 V128"],
-  note: ["M90 130 m-11 0 a11 8 0 1 0 22 0 a11 8 0 1 0 -22 0", "M101 130 V68 L128 76 V90 L101 82"],
-};
 
 /* =========================================================
    RENDERER, SCENE, CAMERA
@@ -511,9 +487,9 @@ function buildMenuBoard() {
     }
     g.fillStyle = "#f4efe6";
     g.textAlign = "center";
-    g.font = "700 92px 'DM Sans'";
+    g.font = "600 92px Fredoka";
     g.fillText("MENU", w / 2, 112);
-    g.font = "400 30px 'DM Mono'";
+    g.font = "600 30px Nunito";
     g.fillStyle = "#cfd8cc";
     g.fillText("click a drink to order", w / 2, 160);
   });
@@ -526,10 +502,10 @@ function buildMenuBoard() {
     const tex = canvasTexture(512, 128, (g, w, h) => {
       g.textAlign = "center";
       g.fillStyle = "#f4efe6";
-      g.font = "700 46px 'DM Sans'";
+      g.font = "600 48px Fredoka";
       g.fillText(SECTIONS[key].drink, w / 2, 66);
       g.fillStyle = "#b9c7b6";
-      g.font = "400 26px 'DM Mono'";
+      g.font = "600 26px Nunito";
       g.fillText(SECTIONS[key].title.toUpperCase(), w / 2, 108);
     });
     const material = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
@@ -600,7 +576,7 @@ function makeBarista() {
   const smile = mesh(new THREE.TorusGeometry(0.045, 0.008, 8, 16, Math.PI), mat(0x5a2a1a), 0, -0.07, 0.185, head);
   smile.rotation.z = Math.PI;
 
-  g.position.set(-0.4, 0, -1.4);
+  g.position.set(1.1, 0, -1.6);
   scene.add(g);
   return { group: g, legs, arms, eyes, walking: false, carrying: false, phase: 0 };
 }
@@ -741,7 +717,7 @@ function order(key) {
 
   const g = barista.group;
   const machineSpot = new THREE.Vector3(2.1, 0, -2.55);
-  const serveSpot = new THREE.Vector3(0.4, 0, -0.5);
+  const serveSpot = new THREE.Vector3(1.1, 0, -0.5);
 
   timeline = gsap.timeline({
     onComplete: () => {
@@ -775,11 +751,11 @@ function order(key) {
   rot = addWalk(timeline, machineSpot, serveSpot, 0, rot);
 
   timeline.call(() => scene.attach(cup));
-  timeline.to(cup.position, { x: 0.4, y: 1.12, z: 0.2, duration: 0.3, ease: "power2.inOut" });
+  timeline.to(cup.position, { x: 1.1, y: 1.12, z: 0.2, duration: 0.3, ease: "power2.inOut" });
   timeline.call(() => { barista.carrying = false; });
   timeline.to(cup.position, { z: 0.62, duration: 0.45, ease: "power3.out" });
   timeline.call(() => {
-    steamEmitter.set(0.4, 1.32, 0.62);
+    steamEmitter.set(1.1, 1.32, 0.62);
     steamOn = true;
   });
   timeline.to({}, { duration: 0.25 });
@@ -793,7 +769,6 @@ const modal = document.getElementById("modal");
 const modalDrink = document.getElementById("modalDrink");
 const modalTitle = document.getElementById("modalTitle");
 const modalBody = document.getElementById("modalBody");
-const latteArt = document.getElementById("latteArt");
 const closeBtn = document.getElementById("closeModal");
 let lastFocus = null;
 
@@ -843,9 +818,6 @@ function openModal(key) {
   modalBody.innerHTML = key === "photos" ? photoCarousel() : s.body;
   if (key === "photos") setupCarousel();
 
-  latteArt.innerHTML = ART[s.art]
-    .map((d, i) => `<path d="${d}" pathLength="1" style="animation-delay:${0.35 + i * 0.25}s"></path>`)
-    .join("");
 
   lastFocus = document.activeElement;
   modal.hidden = false;
@@ -964,7 +936,7 @@ window.addEventListener("resize", () => {
 async function init() {
   try {
     await Promise.race([
-      Promise.all([document.fonts.load("700 46px 'DM Sans'"), document.fonts.load("400 26px 'DM Mono'")]),
+      Promise.all([document.fonts.load("600 48px Fredoka"), document.fonts.load("600 26px Nunito")]),
       new Promise((resolve) => setTimeout(resolve, 2500)),
     ]);
   } catch (err) {
