@@ -52,6 +52,29 @@ const SECTIONS = {
       <p><strong>Corporate Relations · Google Developer Groups KU Leuven.</strong> Coordinated partnerships for the 2025–2026 hackathon.</p>
       <p><strong>Finalist · NTXL Neurotech Hackathon 2026.</strong> Built a real-time EEG pipeline (88% accuracy) with fatigue detection.</p>`,
   },
+  projects: {
+    drink: "Project Frappé",
+    title: "Projects",
+    body: `
+      <p>Things I've built, from apps to hardware.</p>
+
+      <h3>Song recommendation app</h3>
+      <p class="meta">Java · Spotify</p>
+      <p>Recommends new songs based on the tracks you've liked on Spotify.</p>
+
+      <h3>Micronutrient tracker</h3>
+      <p class="meta">Website</p>
+      <p>Takes your personal info and your shopping list, as a photo or as text, logs your micronutrient
+      intake, and warns you when you go over the recommended limits.</p>
+
+      <h3>Game of the Goose · bachelor thesis</h3>
+      <p class="meta">PIC · nRF · ESP32</p>
+      <p>A physical Game of the Goose board where you play against the computer, with automatic dice detection.</p>
+
+      <h3>MATLAB app from a thesis</h3>
+      <p class="meta">MATLAB</p>
+      <p>Turned my dad's thesis into a working MATLAB app.</p>`,
+  },
   publications: {
     drink: "Published Espresso",
     title: "Publications",
@@ -79,8 +102,8 @@ const SECTIONS = {
       and image processing are my favorite corners.</p>
       <p>When I'm not coding, I'm usually taking photos, bouldering, watching films, reading, or going to concerts.</p>`,
   },
-  contact: {
-    drink: "Contact To Go",
+  connect: {
+    drink: "Connect To Go",
     title: "Let's connect",
     body: `
       <p>Feel free to reach out and connect.</p>
@@ -111,7 +134,7 @@ const SECTIONS = {
   },
 };
 
-const MENU_ORDER = ["experience", "publications", "photos", "about", "contact"];
+const MENU_ORDER = ["experience", "projects", "publications", "photos", "about", "connect"];
 
 
 /* =========================================================
@@ -449,7 +472,7 @@ function buildBookshelf() {
       x += w + 0.01;
     }
   }
-  registerClickable(shelf, "books");
+  // registerClickable(shelf, "books");  // turn back on once the books content is ready
 }
 
 function buildRecordPlayer() {
@@ -466,7 +489,7 @@ function buildRecordPlayer() {
     const sleeve = mesh(new THREE.BoxGeometry(0.02, 0.32, 0.32), mat([0x2f5d62, 0xd9a441, 0x8c3b2e][i]), -0.4 - i * 0.03, 0.16, 0, rp);
     sleeve.rotation.z = 0.15;
   }
-  registerClickable(rp, "music");
+  // registerClickable(rp, "music");  // turn back on once the music content is ready
 }
 
 function buildMenuBoard() {
@@ -511,7 +534,7 @@ function buildMenuBoard() {
     const material = new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false });
     const item = new THREE.Mesh(new THREE.PlaneGeometry(1.5, 0.375), material);
     const x = col === 0 ? -0.82 : 0.82;
-    const y = 0.3 - row * 0.48 - (col === 1 ? 0.24 : 0);
+    const y = 0.3 - row * 0.48;
     item.position.set(x, y, 0.06);
     item.userData.key = key;
     item.userData.isMenu = true;
@@ -845,7 +868,7 @@ document.addEventListener("keydown", (e) => {
 
 /* Keyboard and mobile menu */
 const orderList = document.getElementById("orderList");
-[...MENU_ORDER, "books", "music"].forEach((key) => {
+MENU_ORDER.forEach((key) => {
   const btn = document.createElement("button");
   btn.textContent = SECTIONS[key].drink || SECTIONS[key].label;
   btn.addEventListener("click", () => order(key));
