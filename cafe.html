@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azra's Café · Azra Asiksoy</title>
+<meta name="description" content="Azra Asiksoy's portfolio as a cozy 3D café: order a drink to explore her work.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/cafe.css">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+    "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.12.5/index.js"
+  }
+}
+</script>
+</head>
+<body>
+
+<canvas id="scene" aria-label="A 3D café. Use the menu buttons to order a drink and explore Azra's work."></canvas>
+
+<div class="loader" id="loader">warming up the espresso machine…</div>
+
+<header class="topbar">
+  <span class="brand">Azra's Café</span>
+  <a class="classic-link" href="index.html">Classic portfolio →</a>
+</header>
+
+<div class="hint" id="hint">Order a drink from the menu, or check out the bookshelf and record player</div>
+<div class="tooltip" id="tooltip"></div>
+
+<nav class="order-list" id="orderList" aria-label="Café menu"></nav>
+
+<div class="modal" id="modal" hidden>
+  <div class="tray" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="close" id="closeModal" aria-label="Close">✕</button>
+    <div class="cup-side">
+      <svg viewBox="0 0 240 240" aria-hidden="true">
+        <defs>
+          <radialGradient id="coffeeGrad" cx="45%" cy="40%" r="65%">
+            <stop offset="0%" stop-color="#d39a64"/>
+            <stop offset="55%" stop-color="#a8683a"/>
+            <stop offset="100%" stop-color="#6e3f22"/>
+          </radialGradient>
+        </defs>
+        <circle cx="120" cy="120" r="112" fill="#efe3d1"/>
+        <circle cx="120" cy="120" r="98" fill="none" stroke="#e2d2bc" stroke-width="3"/>
+        <rect x="186" y="106" width="44" height="28" rx="14" fill="#ffffff"/>
+        <circle cx="120" cy="120" r="80" fill="#ffffff"/>
+        <circle cx="120" cy="120" r="68" fill="url(#coffeeGrad)"/>
+        <circle cx="120" cy="120" r="68" fill="none" stroke="#c9905d" stroke-width="4" opacity="0.6"/>
+        <g class="art" id="latteArt" transform="translate(20 20)"></g>
+      </svg>
+    </div>
+    <article class="receipt">
+      <div class="receipt-scroll">
+        <header class="receipt-head">
+          <p class="shop">Azra's Café</p>
+          <p class="receipt-meta"><span id="orderNo"></span><span id="orderTime"></span></p>
+        </header>
+        <div class="receipt-item"><span id="modalDrink"></span><span>on the house</span></div>
+        <h2 id="modalTitle"></h2>
+        <div class="receipt-body" id="modalBody"></div>
+        <footer class="receipt-foot">
+          <p>Thank you for visiting!</p>
+          <div class="barcode" aria-hidden="true"></div>
+        </footer>
+      </div>
+    </article>
+  </div>
+</div>
+
+<script type="module" src="js/cafe.js"></script>
+</body>
+</html>
